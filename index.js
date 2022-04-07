@@ -38,7 +38,6 @@ const getFirstTransaction = async (start) => {
             upperBoundary = lowerBoundary;
         }
     }
-    console.log(`Found first transaction at ${lowerBoundary}`);
     return lowerBoundary;
 }
 
@@ -77,8 +76,11 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
 }
 
 const start = async () => {
+    const args = process.argv.slice(2);
     const alive = await rpc("getwalletinfo", []);
-    const liveCount = await getFirstTransaction(alive.txcount);
+    const liveCount = args[0] ? args[0] : await getFirstTransaction(alive.txcount);
+
+    console.log(`Found first transaction at ${liveCount}`);
 
     let startAtTx = liveCount - BATCH_TX_COUNT;
     let prevBlock = 0;
