@@ -82,7 +82,7 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
 
 const start = async () => {
     const args = process.argv.slice(2);
-    const currency = args[0];
+    let currency = args[0];
 
     if (!currency) {
         currency = 'btc';
