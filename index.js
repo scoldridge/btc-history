@@ -1,5 +1,10 @@
 const axios = require('axios');
-const { bitcoinImportantBlocks } = require('./blocks');
+const { 
+    bitcoinImportantBlocks, 
+    bitcoinCashImportantBlocks,
+    litecoinImportantBlocks,
+    dogecoinImportantBlocks
+} = require('./blocks');
 
 // - Counters and constants
 let sendAmount = 0;
@@ -77,8 +82,20 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
 
 const start = async () => {
     const args = process.argv.slice(2);
+    const currency = args[0];
+
+    if (!currency) {
+        console.log('Currency is required: [btc, bch, doge, ltc]');
+        process.exit();
+    }
+
+    const importantBlocks = (currency === 'bch') ? bitcoinCashImportantBlocks
+        : (currency === 'ltc') ? litecoinImportantBlocks
+        : (currency === 'doge') ? dogecoinImportantBlocks
+        : bitcoinImportantBlocks;
+
     const alive = await rpc("getwalletinfo", []);
-    const liveCount = args[0] ? args[0] : await getFirstTransaction(alive.txcount);
+    const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount);
 
     console.log(`Found first transaction at ${liveCount}`);
 
@@ -86,7 +103,7 @@ const start = async () => {
     let prevBlock = 0;
     let prevTime = 1522544400; // 2018-04-01
 
-    while (startAtTx >= 0 || prevBlock > bitcoinImportantBlocks[bitcoinImportantBlocks.length - 1]) {
+    while (startAtTx >= 0 || prevBlock > importantBlocks[importantBlocks.length - 1]) {
         const next = processTransactions(
             await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx]), 
             prevBlock, 
