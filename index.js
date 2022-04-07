@@ -94,7 +94,7 @@ const start = async () => {
         prevTime = next.prevTime;
         startAtTx -= BATCH_TX_COUNT;
     }
-    console.log(balances.toString());
+    console.log(JSON.stringify(balances));
 }
 
 start();
