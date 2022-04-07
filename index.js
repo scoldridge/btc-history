@@ -28,13 +28,18 @@ const getFirstTransaction = async (start) => {
         const result = await rpc("listtransactions", ["*", 1, check]);
 
         if (result.length === 0) {
-            upperBoundary = (upperBoundary - lowerBoundary == 1) ? lowerBoundary : check -1;
+            upperBoundary = check;
         } else {
-            lowerBoundary = (upperBoundary - lowerBoundary == 1) ? check + 1 : check;
+            lowerBoundary = check;
+        }
+
+        if (upperBoundary - lowerBoundary == 1) {
+            //upperBoundary is non-existent, so return lowerBoundary
+            upperBoundary = lowerBoundary;
         }
     }
-    console.log(`Found first transaction at ${lowerBoundary}`)
-    return Math.min(lowerBoundary, upperBoundary);
+    console.log(`Found first transaction at ${lowerBoundary}`);
+    return lowerBoundary;
 }
 
 // - Input an array of transactions and calculate their balance
