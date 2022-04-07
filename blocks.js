@@ -1,4 +1,4 @@
-export const bitcoinImportantBlocks = [
+const bitcoinImportantBlocks = [
     516039,
     529966,
     543834,
@@ -12,3 +12,5 @@ export const bitcoinImportantBlocks = [
     650731,
     663913,         // 2021
 ];
+
+exports.bitcoinImportantBlocks = bitcoinImportantBlocks;
