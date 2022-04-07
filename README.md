@@ -5,8 +5,9 @@ npm
 
 ## Usage
 
-node index.js [txcount]
+node index.js [currency] [txcount]
 
+- currency is one of [btc, doge, ltc, bch] - defaults to btc
 - txcount can be ommitted and the script will figure out the first transaction number
 
 ## Example Output
