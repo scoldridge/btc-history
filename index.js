@@ -85,8 +85,7 @@ const start = async () => {
     const currency = args[0];
 
     if (!currency) {
-        console.log('Currency is required: [btc, bch, doge, ltc]');
-        process.exit();
+        currency = 'btc';
     }
 
     const importantBlocks = (currency === 'bch') ? bitcoinCashImportantBlocks
