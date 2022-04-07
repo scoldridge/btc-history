@@ -30,7 +30,7 @@ const getFirstTransaction = async (start) => {
         if (result.length === 0) {
             upperBoundary = (upperBoundary - lowerBoundary == 1) ? lowerBoundary : check -1;
         } else {
-            lowerBoundary = check;
+            lowerBoundary = (upperBoundary - lowerBoundary == 1) ? check + 1 : check;
         }
     }
     console.log(`Found first transaction at ${lowerBoundary}`)
