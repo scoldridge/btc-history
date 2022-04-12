@@ -11,12 +11,15 @@ let sendAmount = 0;
 let sendFeeAmount = 0;
 let receiveAmount = 0;
 
+let currency = "btc";
 const BATCH_TX_COUNT = 5000; // Process this many transactions at once
 const JUMP_TX_COUNT = 5000; // Move this many transactions forward
 const balances = [];
 
+let blocks = 0; // This is required for coins that don't store blockheight
+
 // - External RPC calls to bitcoin-core
-const rpc = async (method, params, currency) => {
+const rpc = async (method, params) => {
     const port = currency === "ltc" ? 9332 : 8332
     const url = `http://username:password@127.0.0.1:${port}/`;
     const { data } = await axios.post(url, { jsonrpc: "1.0", method, params} );
@@ -24,14 +27,14 @@ const rpc = async (method, params, currency) => {
 }
 
 // - The daemon returns an estimated number of transactions, so we need to find the first one
-const getFirstTransaction = async (start, currency) => {
+const getFirstTransaction = async (start) => {
     let lowerBoundary = start;
     let upperBoundary = start + JUMP_TX_COUNT;
 
     while (lowerBoundary != upperBoundary) {
         console.log(`Check between ${lowerBoundary}..${upperBoundary}`);
         const check = Math.floor((lowerBoundary + upperBoundary) / 2);
-        const result = await rpc("listtransactions", ["*", 1, check], currency);
+        const result = await rpc("listtransactions", ["*", 1, check]);
 
         if (result.length === 0) {
             upperBoundary = check;
@@ -50,7 +53,7 @@ const getFirstTransaction = async (start, currency) => {
 // - Input an array of transactions and calculate their balance
 const processTransactions = (transactions, prevBlock, prevTime) => {
     transactions.map((tx) => {
-        prevBlock = tx.blockheight;
+        prevBlock = currency === "ltc" ? blocks - tx.confirmations : tx.blockheight;
         if (bitcoinImportantBlocks.length === 0) return;
 
         if (prevBlock >= bitcoinImportantBlocks[0]) {
@@ -83,19 +86,21 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
 
 const start = async () => {
     const args = process.argv.slice(2);
-    let currency = args[0];
-
-    if (!currency) {
-        currency = 'btc';
-    }
+    currency = args[0] ? args[0] : currency;
 
     const importantBlocks = (currency === 'bch') ? bitcoinCashImportantBlocks
         : (currency === 'ltc') ? litecoinImportantBlocks
         : (currency === 'doge') ? dogecoinImportantBlocks
         : bitcoinImportantBlocks;
 
-    const alive = await rpc("getwalletinfo", [], currency);
-    const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount, currency);
+    const alive = await rpc("getwalletinfo", []);
+    const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount);
+
+    if (currency === "ltc") {
+        console.log("Getting highest block height");
+        const blockinfo = await rpc("getblockchaininfo", []);
+        blocks = blockinfo.blocks;
+    };
 
     console.log(`Found first transaction at ${liveCount}`);
 
@@ -105,7 +110,7 @@ const start = async () => {
 
     while (startAtTx >= 0 || prevBlock > importantBlocks[importantBlocks.length - 1]) {
         const next = processTransactions(
-            await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx], currency), 
+            await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx]), 
             prevBlock, 
             prevTime
         );
