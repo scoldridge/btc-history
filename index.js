@@ -24,14 +24,14 @@ const rpc = async (method, params, currency) => {
 }
 
 // - The daemon returns an estimated number of transactions, so we need to find the first one
-const getFirstTransaction = async (start) => {
+const getFirstTransaction = async (start, currency) => {
     let lowerBoundary = start;
     let upperBoundary = start + JUMP_TX_COUNT;
 
     while (lowerBoundary != upperBoundary) {
         console.log(`Check between ${lowerBoundary}..${upperBoundary}`);
         const check = Math.floor((lowerBoundary + upperBoundary) / 2);
-        const result = await rpc("listtransactions", ["*", 1, check]);
+        const result = await rpc("listtransactions", ["*", 1, check], currency);
 
         if (result.length === 0) {
             upperBoundary = check;
@@ -95,7 +95,7 @@ const start = async () => {
         : bitcoinImportantBlocks;
 
     const alive = await rpc("getwalletinfo", [], currency);
-    const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount);
+    const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount, currency);
 
     console.log(`Found first transaction at ${liveCount}`);
 
@@ -105,7 +105,7 @@ const start = async () => {
 
     while (startAtTx >= 0 || prevBlock > importantBlocks[importantBlocks.length - 1]) {
         const next = processTransactions(
-            await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx]), 
+            await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx], currency), 
             prevBlock, 
             prevTime
         );
