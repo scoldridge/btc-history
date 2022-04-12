@@ -23,7 +23,8 @@ let importantBlocks = bitcoinImportantBlocks;
 
 // - External RPC calls to bitcoin-core
 const rpc = async (method, params) => {
-    const port = currency === "ltc" ? 9332 : 8332
+    const port = currency === "ltc" ? 9332 
+        : currency === "doge" ? 22555 : 8332
     const url = `http://username:password@127.0.0.1:${port}/`;
     const { data } = await axios.post(url, { jsonrpc: "1.0", method, params} );
     return data.result;
