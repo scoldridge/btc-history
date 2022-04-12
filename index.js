@@ -16,8 +16,9 @@ const JUMP_TX_COUNT = 5000; // Move this many transactions forward
 const balances = [];
 
 // - External RPC calls to bitcoin-core
-const rpc = async (method, params) => {
-    const url = "http://username:password@127.0.0.1:8332/";
+const rpc = async (method, params, currency) => {
+    const port = currency === "ltc" ? 9332 : 8332
+    const url = `http://username:password@127.0.0.1:${port}/`;
     const { data } = await axios.post(url, { jsonrpc: "1.0", method, params} );
     return data.result;
 }
@@ -93,7 +94,7 @@ const start = async () => {
         : (currency === 'doge') ? dogecoinImportantBlocks
         : bitcoinImportantBlocks;
 
-    const alive = await rpc("getwalletinfo", []);
+    const alive = await rpc("getwalletinfo", [], currency);
     const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount);
 
     console.log(`Found first transaction at ${liveCount}`);
