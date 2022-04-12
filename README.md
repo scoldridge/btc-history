@@ -42,7 +42,9 @@ BCH: `bitcoind -daemon -stopatheight=675000`
 
 `bitcoind -connect=0 -noconnect -daemon -walletdir=/home/ubuntu/wallet_dir -rpcuser=username -rpcpassword=password`
 `litecoind -connect=0 -noconnect -daemon -walletdir=/home/ubuntu/wallet_dir -rpcuser=username -rpcpassword=password`
-`dogecoind -connect=0 -noconnect -daemon -walletdir=/home/ubuntu/wallet_dir -rpcuser=username -rpcpassword=password`
+`dogecoind -connect=0 -noconnect -daemon -rpcuser=username -rpcpassword=password`
+
+Note: dogecoin does not support the walletdir parameter
 
 - Start the daemon with no connection to the network, expose rpc 
 
