@@ -30,6 +30,11 @@ Output from the script is JSON and prints the balance amount at each important b
 
 The core daemon software takes an input file (wallet.dat) with a list of addresses.
 
+Note: dogecoin requires much more ram than the others, we have used theses values:
+- Dogecoin: 16GB
+- Litecoin: 8GB
+- Bitcoin: 4GB
+
 ##### Starting the daemon
 
 Note: bitcoin-cash uses the prefix `bitcoin` for all of its binaries.
@@ -44,7 +49,7 @@ BCH: `bitcoind -daemon -stopatheight=675000`
 `litecoind -connect=0 -noconnect -daemon -walletdir=/home/ubuntu/wallet_dir -rpcuser=username -rpcpassword=password`
 `dogecoind -connect=0 -noconnect -daemon -rpcuser=username -rpcpassword=password`
 
-Note: dogecoin does not support the walletdir parameter
+Note: dogecoin does not support the walletdir parameter, use the default location instead (~/.dogecoin)
 
 - Start the daemon with no connection to the network, expose rpc 
 
