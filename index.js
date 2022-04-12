@@ -11,12 +11,15 @@ let sendAmount = 0;
 let sendFeeAmount = 0;
 let receiveAmount = 0;
 
-let currency = "btc";
 const BATCH_TX_COUNT = 5000; // Process this many transactions at once
 const JUMP_TX_COUNT = 5000; // Move this many transactions forward
 const balances = [];
 
 let blocks = 0; // This is required for coins that don't store blockheight
+
+// - Defaults
+let currency = "btc";
+let importantBlocks = bitcoinImportantBlocks;
 
 // - External RPC calls to bitcoin-core
 const rpc = async (method, params) => {
@@ -54,10 +57,10 @@ const getFirstTransaction = async (start) => {
 const processTransactions = (transactions, prevBlock, prevTime) => {
     transactions.map((tx) => {
         prevBlock = currency === "ltc" ? blocks - tx.confirmations : tx.blockheight;
-        if (bitcoinImportantBlocks.length === 0) return;
+        if (importantBlocks.length === 0) return;
 
-        if (prevBlock >= bitcoinImportantBlocks[0]) {
-            let snapshotBlock = bitcoinImportantBlocks.shift();
+        if (prevBlock >= importantBlocks[0]) {
+            let snapshotBlock = importantBlocks.shift();
             let timestamp = new Date(prevTime * 1000).toISOString();
 
             balances.push({
@@ -88,7 +91,7 @@ const start = async () => {
     const args = process.argv.slice(2);
     currency = args[0] ? args[0] : currency;
 
-    const importantBlocks = (currency === 'bch') ? bitcoinCashImportantBlocks
+    importantBlocks = (currency === 'bch') ? bitcoinCashImportantBlocks
         : (currency === 'ltc') ? litecoinImportantBlocks
         : (currency === 'doge') ? dogecoinImportantBlocks
         : bitcoinImportantBlocks;
