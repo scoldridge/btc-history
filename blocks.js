@@ -52,7 +52,22 @@ const dogecoinImportantBlocks = [
     3546269,        // 2021
 ]
 
+// We'll just use random blocks here
+const testnetImportantBlocks = [
+    1570000,
+    1580000,
+    1590000,
+    1600000,
+    1610000,
+    1620000,
+    1630000,
+    1640000,
+    1650000,
+    1660000,
+]
+
 exports.bitcoinImportantBlocks = bitcoinImportantBlocks;
 exports.bitcoinCashImportantBlocks = bitcoinCashImportantBlocks;
 exports.litecoinImportantBlocks = litecoinImportantBlocks;
 exports.dogecoinImportantBlocks = dogecoinImportantBlocks;
+exports.testnetImportantBlocks = testnetImportantBlocks;

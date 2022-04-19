@@ -26,7 +26,7 @@ Output from the script is JSON and prints the balance amount at each important b
 }
 ```
 
-## Core Commands
+## Core Setup
 
 The core daemon software takes an input file (wallet.dat) with a list of addresses.
 
@@ -35,7 +35,35 @@ Note: dogecoin requires much more ram than the others, we have used theses value
 - Litecoin: 8GB
 - Bitcoin: 4GB
 
-##### Starting the daemon
+##### Start the daemon (testnet use)
+
+Testnet mode will allow us to verify the outputs of the script from any node.
+We will choose a random list of publicly available addresses on blockchain.info and run the script with the snapshot every 10000 blocks.
+
+`bitcoind -daemon -stopatheight=1640000 -testnet`
+- Let the bitcoin testnet sync until <block>
+
+`bitcoind -connect=0 -noconnect -daemon -testnet -rpcuser=username -rpcpassword=password`
+- Start daemon with rpcuser/pass and do not connect to network
+
+`./bitcoin/src/bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password createwallet testnet true true`
+`./bitcoin/src/bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password -named createwallet wallet_name="testnet" descriptors=false`
+- Create a wallet as we are not importing one here
+
+`bitcoin-cli importaddress <address> false`
+- Import an address in watchonly mode, and do not run a rescan
+
+./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress 2N2ihWD7peTiHpLf9Ly2MmJWT6NMDGTdCLN "" false
+./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress tb1qf5scd68pjy6funqdlg6mx6v6hgqulgfmll490f "" false
+./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress 2MwsfKaVymNgMQcBEKNnaiTKJvuJKhZPrtP "" false
+./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress mkoPnqvwZJwhj2Jc7XA3MZuiv8VFUM1X52 "" false
+
+`./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 rescanblockchain 1540000 1640000`
+- Rescan for transactions between <start_block> and <end_block>
+
+`./bitcoin/src/bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password getwalletinfo`
+
+##### Starting the daemon (production use)
 
 Note: bitcoin-cash uses the prefix `bitcoin` for all of its binaries.
 

@@ -3,7 +3,8 @@ const {
     bitcoinImportantBlocks, 
     bitcoinCashImportantBlocks,
     litecoinImportantBlocks,
-    dogecoinImportantBlocks
+    dogecoinImportantBlocks,
+    testnetImportantBlocks
 } = require('./blocks');
 
 // - Counters and constants
@@ -23,8 +24,10 @@ let importantBlocks = bitcoinImportantBlocks;
 
 // - External RPC calls to bitcoin-core
 const rpc = async (method, params) => {
-    const port = currency === "ltc" ? 9332 
-        : currency === "doge" ? 22555 : 8332
+    const port = 
+        currency === "ltc" ? 9332 :
+        currency === "doge" ? 22555 : 
+        currency === "tbtc" ? 18332 : 8332
     const url = `http://username:password@127.0.0.1:${port}/`;
     const { data } = await axios.post(url, { jsonrpc: "1.0", method, params} );
     return data.result;
@@ -95,6 +98,7 @@ const start = async () => {
     importantBlocks = (currency === 'bch') ? bitcoinCashImportantBlocks
         : (currency === 'ltc') ? litecoinImportantBlocks
         : (currency === 'doge') ? dogecoinImportantBlocks
+        : (currency === 'tbtc') ? testnetImportantBlocks
         : bitcoinImportantBlocks;
 
     const alive = await rpc("getwalletinfo", []);
