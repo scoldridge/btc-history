@@ -118,7 +118,7 @@ const start = async () => {
 
     while (startAtTx >= 0 || prevBlock > importantBlocks[importantBlocks.length - 1]) {
         const next = processTransactions(
-            await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx]), 
+            await rpc("listtransactions", ["*", BATCH_TX_COUNT, startAtTx, currency === 'tbtc' ? true : false]), 
             prevBlock, 
             prevTime
         );
