@@ -43,25 +43,33 @@ We will choose a random list of publicly available addresses on blockchain.info 
 `bitcoind -daemon -stopatheight=1640000 -testnet`
 - Let the bitcoin testnet sync until <block>
 
+`bitcoind -connect=0 -noconnect -daemon -rpcuser=username -rpcpassword=password`
+
 `bitcoind -connect=0 -noconnect -daemon -testnet -rpcuser=username -rpcpassword=password`
+
 - Start daemon with rpcuser/pass and do not connect to network
 
-`./bitcoin/src/bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password createwallet testnet true true`
-`./bitcoin/src/bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password -named createwallet wallet_name="testnet" descriptors=false`
+`bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password createwallet testnet true true`
+`bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password -named createwallet wallet_name="testnet" descriptors=false`
+
 - Create a wallet as we are not importing one here
 
 `bitcoin-cli importaddress <address> false`
 - Import an address in watchonly mode, and do not run a rescan
 
-./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress 2N2ihWD7peTiHpLf9Ly2MmJWT6NMDGTdCLN "" false
-./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress tb1qf5scd68pjy6funqdlg6mx6v6hgqulgfmll490f "" false
-./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress 2MwsfKaVymNgMQcBEKNnaiTKJvuJKhZPrtP "" false
-./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress mkoPnqvwZJwhj2Jc7XA3MZuiv8VFUM1X52 "" false
+`bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress 2N2ihWD7peTiHpLf9Ly2MmJWT6NMDGTdCLN "" false`
 
-`./bitcoin/src/bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 rescanblockchain 1540000 1640000`
-- Rescan for transactions between <start_block> and <end_block>
+`bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress tb1qf5scd68pjy6funqdlg6mx6v6hgqulgfmll490f "" false`
 
-`./bitcoin/src/bitcoin-cli -rpcport=18332 -rpcuser=username -rpcpassword=password getwalletinfo`
+`bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress 2MwsfKaVymNgMQcBEKNnaiTKJvuJKhZPrtP "" false`
+
+`bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 importaddress mkoPnqvwZJwhj2Jc7XA3MZuiv8VFUM1X52 "" false`
+
+`bitcoin-cli -rpcuser=username -rpcpassword=password -rpcport=18332 rescanblockchain 1540000 1640000`
+
+- Rescan for transactions between <start_block> and <end_block>, run this after importing any addresses and the daemon will rescan the blockchain and pick up any transaction that matches our address set.
+
+`bitcoin-cli -rpcuser=username -rpcpassword=password listtransactions "*" 1 1`
 
 ##### Starting the daemon (production use)
 
@@ -85,12 +93,6 @@ Note: dogecoin does not support the walletdir parameter, use the default locatio
 `litecoin-cli stop`
 
 - Stop the daemon
-
-##### Resyncing the daemon
-
-`bitcoin-cli rescanblockchain start_block stop_block`
-- Rescan for transactions between these blocks
-
 
 ##### Logging
 

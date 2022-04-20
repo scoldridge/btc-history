@@ -60,7 +60,7 @@ const getFirstTransaction = async (start) => {
 // - Input an array of transactions and calculate their balance
 const processTransactions = (transactions, prevBlock, prevTime) => {
     transactions.map((tx) => {
-        prevBlock = ["ltc", "doge"].includes(currency) ? blocks - tx.confirmations : tx.blockheight;
+        prevBlock = ["ltc", "doge", "bch"].includes(currency) ? blocks - tx.confirmations : tx.blockheight;
         if (importantBlocks.length === 0) return;
 
         if (prevBlock >= importantBlocks[0]) {
@@ -104,7 +104,7 @@ const start = async () => {
     const alive = await rpc("getwalletinfo", []);
     const liveCount = args[1] ? args[1] : await getFirstTransaction(alive.txcount);
 
-    if (currency === "ltc" || currency === "doge") {
+    if (["ltc", "doge", "bch"].includes(currency)) {
         console.log("Getting highest block height");
         const blockinfo = await rpc("getblockchaininfo", []);
         blocks = blockinfo.blocks;
