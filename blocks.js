@@ -11,6 +11,10 @@ const bitcoinImportantBlocks = [
     637090,
     650731,
     663913,         // 2021
+    677222,
+    689256,
+    702951,
+    716598,         // 2022
 ];
 
 const bitcoinCashImportantBlocks = [
