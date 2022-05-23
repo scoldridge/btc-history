@@ -13,7 +13,7 @@ let sendFeeAmount = 0;
 let receiveAmount = 0;
 
 const BATCH_TX_COUNT = 5000; // Process this many transactions at once
-const JUMP_TX_COUNT = 7500; // Move this many transactions forward
+const JUMP_TX_COUNT = 15000; // Move this many transactions forward
 const balances = [];
 
 let blocks = 0; // This is required for coins that don't store blockheight
