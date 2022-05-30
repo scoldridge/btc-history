@@ -17,6 +17,7 @@ const JUMP_TX_COUNT = 200000; // Move this many transactions forward
 const balances = [];
 
 let blocks = 0; // This is required for coins that don't store blockheight
+let chunkBlocks = 0;
 
 // - Defaults
 let currency = "btc";
@@ -66,16 +67,22 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
         if (prevBlock >= importantBlocks[0]) {
             let snapshotBlock = importantBlocks.shift();
             let timestamp = new Date(prevTime * 1000).toISOString();
+            let nextTimestamp = new Date(tx.blocktime * 1000).toISOString();
 
             balances.push({
-                block: snapshotBlock,
-                time: timestamp,
+                previousBlock: prevBlock,
+                snapshotBlock: snapshotBlock,
+                previousTime: timestamp,
+                nextTime: nextTimestamp,
                 balances: {
                     send: sendAmount,
                     fee: sendFeeAmount,
                     receive: receiveAmount,
-                }
+                },
+                transactionCount: chunkBlocks,
             });
+
+            chunkBlocks = 0;
         }
 
         if (Number(tx.confirmations) > 1) {
@@ -84,8 +91,9 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
                 sendAmount += Math.abs(tx.amount);
                 sendFeeAmount += Math.abs(tx.fee);
             }
+            chunkBlocks++;
+            prevTime = tx.blocktime;
         }
-        prevTime = tx.blocktime;
     });
 
     return { prevBlock, prevTime }
