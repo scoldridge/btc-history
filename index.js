@@ -7,6 +7,8 @@ const {
     testnetImportantBlocks
 } = require('./blocks');
 
+const fs = require('fs');
+
 // - Counters and constants
 let sendAmount = 0;
 let sendFeeAmount = 0;
@@ -18,6 +20,7 @@ const balances = [];
 
 let blocks = 0; // This is required for coins that don't store blockheight
 let chunkBlocks = 0;
+let chunkTransactions = 0;
 
 // - Defaults
 let currency = "btc";
@@ -60,6 +63,13 @@ const getFirstTransaction = async (start) => {
 
 // - Input an array of transactions and calculate their balance
 const processTransactions = (transactions, prevBlock, prevTime) => {
+
+    //Write txes into a file for further debug
+    let data = JSON.stringify(transactions);
+    fs.writeFileSync(`transactions-${chunkTransactions}.json`, data);
+
+    chunkTransactions++;
+
     transactions.map((tx) => {
         prevBlock = ["ltc", "doge", "bch"].includes(currency) ? blocks - tx.confirmations : tx.blockheight;
         if (importantBlocks.length === 0) return;
