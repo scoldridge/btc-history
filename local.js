@@ -35,14 +35,16 @@ const start = () => {
 
    const niceQuarters = quarters.map((q) => {
        return {
-           from: moment.unix(q.from).format('DD/MM/YYYY'),
-           to: moment.unix(q.to).format('DD/MM/YYYY'),
+           from: moment.unix(q.from / 1000).format('DD/MM/YYYY'),
+           to: moment.unix(q.to / 1000).format('DD/MM/YYYY'),
            send: q.send,
            sendFee: q.sendFee,
            receive: q.receive,
            transactions: q.transactions
        }
-   })
+   });
+
+   console.log(JSON.stringify(niceQuarters));
 }
 
 const createQuarter = (tx) => {
@@ -50,6 +52,7 @@ const createQuarter = (tx) => {
     const receive = (!tx.fee) ? tx.amount : 0;
     const send = (tx.fee) ? Math.abs(tx.amount) : 0;
     const sendFee = (tx.fee) ? Math.abs(tx.fee) : 0;
+
     return {
         from: moment(current).startOf('quarter').valueOf(),
         to: moment(current).endOf('quarter').valueOf(),
