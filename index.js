@@ -66,7 +66,7 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
 
     //Write txes into a file for further debug
     let data = JSON.stringify(transactions);
-    fs.writeFileSync(`transactions-${chunkTransactions}.json`, data);
+    fs.writeFileSync(`./data/transactions-${chunkTransactions}.json`, data);
 
     chunkTransactions++;
 
