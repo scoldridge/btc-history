@@ -130,7 +130,7 @@ const start = async () => {
 
     console.log(`Found first transaction at ${liveCount}`);
 
-    let startAtTx = liveCount - BATCH_TX_COUNT;
+    let startAtTx = (liveCount + 1) - BATCH_TX_COUNT;
     let prevBlock = 0;
     let prevTime = 1522544400; // 2018-04-01
 

@@ -9,7 +9,7 @@ const start = () => {
         const json = JSON.parse(fs.readFileSync(`${directory}${file}`));
         json.map((transaction) => {
             // Find the quarter the transaction belongs to
-            const transactionTime = transaction.timereceived;
+            const transactionTime = transaction.time;
 
             if (transaction.confirmations > 0) {
 
@@ -48,7 +48,7 @@ const start = () => {
 }
 
 const createQuarter = (tx) => {
-    const current = moment(tx.timereceived * 1000);
+    const current = moment(tx.time * 1000);
     const receive = (!tx.fee) ? tx.amount : 0;
     const send = (tx.fee) ? Math.abs(tx.amount) : 0;
     const sendFee = (tx.fee) ? Math.abs(tx.fee) : 0;
