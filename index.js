@@ -7,6 +7,8 @@ const {
     testnetImportantBlocks
 } = require('./blocks');
 
+const fs = require('fs');
+
 // - Counters and constants
 let sendAmount = 0;
 let sendFeeAmount = 0;
@@ -17,6 +19,8 @@ const JUMP_TX_COUNT = 200000; // Move this many transactions forward
 const balances = [];
 
 let blocks = 0; // This is required for coins that don't store blockheight
+let chunkBlocks = 0;
+let chunkTransactions = 0;
 
 // - Defaults
 let currency = "btc";
@@ -59,6 +63,13 @@ const getFirstTransaction = async (start) => {
 
 // - Input an array of transactions and calculate their balance
 const processTransactions = (transactions, prevBlock, prevTime) => {
+
+    //Write txes into a file for further debug
+    let data = JSON.stringify(transactions);
+    fs.writeFileSync(`./data/transactions-${chunkTransactions}.json`, data);
+
+    chunkTransactions++;
+
     transactions.map((tx) => {
         prevBlock = ["ltc", "doge", "bch"].includes(currency) ? blocks - tx.confirmations : tx.blockheight;
         if (importantBlocks.length === 0) return;
@@ -66,16 +77,22 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
         if (prevBlock >= importantBlocks[0]) {
             let snapshotBlock = importantBlocks.shift();
             let timestamp = new Date(prevTime * 1000).toISOString();
+            let nextTimestamp = new Date(tx.blocktime * 1000).toISOString();
 
             balances.push({
-                block: snapshotBlock,
-                time: timestamp,
+                previousBlock: prevBlock,
+                snapshotBlock: snapshotBlock,
+                previousTime: timestamp,
+                nextTime: nextTimestamp,
                 balances: {
                     send: sendAmount,
                     fee: sendFeeAmount,
                     receive: receiveAmount,
-                }
+                },
+                transactionCount: chunkBlocks,
             });
+
+            chunkBlocks = 0;
         }
 
         if (Number(tx.confirmations) > 1) {
@@ -84,8 +101,9 @@ const processTransactions = (transactions, prevBlock, prevTime) => {
                 sendAmount += Math.abs(tx.amount);
                 sendFeeAmount += Math.abs(tx.fee);
             }
+            chunkBlocks++;
+            prevTime = tx.blocktime;
         }
-        prevTime = tx.blocktime;
     });
 
     return { prevBlock, prevTime }
@@ -112,7 +130,7 @@ const start = async () => {
 
     console.log(`Found first transaction at ${liveCount}`);
 
-    let startAtTx = liveCount - BATCH_TX_COUNT;
+    let startAtTx = (liveCount + 1) - BATCH_TX_COUNT;
     let prevBlock = 0;
     let prevTime = 1522544400; // 2018-04-01
 
